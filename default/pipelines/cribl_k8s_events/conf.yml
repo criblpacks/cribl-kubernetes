@@ -1,0 +1,114 @@
+output: default
+streamtags: []
+groups:
+  7b7zGc:
+    name: Extract involvedObject
+    index: 5
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Process K8S Event logs
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: sourcetype
+          value: "'k8s:logs'"
+        - disabled: false
+          name: source
+          value: "'k8s-logs'"
+    description: Add common fields
+  - id: serde
+    filter: "true"
+    disabled: false
+    conf:
+      mode: extract
+      type: json
+      srcField: object
+      remove:
+        - _raw
+        - object*
+      fieldFilterExpr: value !== '' && value !== null
+    description: Parse the _raw JSON field
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: metadata.creationTimestamp
+      dstField: _time
+      defaultTimezone: UTC
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+    description: Use metadata.creationTimestamp as _time
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Extract the involvedObject field if present, assign a default otherwise
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Note: The samples we have do not have a value for involvedObject"
+    groupId: 7b7zGc
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: _raw
+      iterations: 100
+      overwrite: false
+      regex: /involvedObject..:{(?<involvedObject>[^}]+)/
+    groupId: 7b7zGc
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: message
+          value: note
+        - disabled: false
+          name: involvedObject
+          value: "involvedObject==null ? metadata.name : involvedObject"
+    groupId: 7b7zGc
+  - id: serialize
+    filter: "true"
+    disabled: false
+    conf:
+      type: json
+      dstField: _raw
+      fields:
+        - apiVersion
+        - kind
+        - metadata*
+        - reguarding*
+        - reporting*
+    description: Serializes the JSON object into _raw
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - _raw
+        - cribl_*
+        - _time
+        - source
+        - sourcetype
+        - host
+        - message
+        - reason
+        - involvedObject
+      remove:
+        - "*"
+    description: Removed unneeded fields
+description: ""

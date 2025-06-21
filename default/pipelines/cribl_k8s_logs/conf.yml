@@ -1,0 +1,139 @@
+output: default
+streamtags: []
+groups:
+  iANlpn:
+    name: Parse _raw depending on the format
+    index: 4
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Parse JSON and non-JSON K8S logs
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Likely want to move this into a separate pipeline
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: sourcetype
+          value: "'k8s:logs'"
+        - disabled: false
+          name: source
+          value: "'edge-k8s-logs-' + kube_namespace + '-' + kube_pod"
+    description: Set common fields
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: |-
+        _raw can come in one of three formats:
+        * JSON
+        * log_level+type+JSON
+        * single line text
+  - id: regex_extract
+    filter: _raw.match(/\s+\w+\s+\w+\s+{/)
+    disabled: null
+    conf:
+      source: _raw
+      iterations: 100
+      overwrite: true
+      regex: /\s+(?<log_level>\w+)\s+(?<log_type>\w+)\s+(?<__raw>.+)/
+    groupId: iANlpn
+    description: Parse log_level+type+JSON
+  - id: serde
+    filter: __raw!=null
+    disabled: null
+    conf:
+      mode: extract
+      type: json
+      srcField: __raw
+    groupId: iANlpn
+    description: Parse the JSON from a log_level+type+JSON log
+  - id: serde
+    filter: _raw.startsWith("{")
+    disabled: null
+    conf:
+      mode: extract
+      type: json
+      srcField: _raw
+      remove:
+        - _raw
+      fieldFilterExpr: value !== '' && value !== null
+    groupId: iANlpn
+    description: Parse JSON _raw logs
+  - id: eval
+    filter: '!_raw.startsWith("{") && __raw==null'
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: message
+          value: _raw
+    groupId: iANlpn
+    description: Set the message field to _raw for non-JSON logs
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: The time field should be in UTC
+  - id: auto_timestamp
+    filter: _raw.startsWith("{")
+    disabled: null
+    conf:
+      srcField: time
+      dstField: _time
+      defaultTimezone: UTC
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+    description: Only apply to JSON formatted logs because they have a reliable time field
+  - id: serialize
+    filter: "true"
+    disabled: false
+    conf:
+      type: json
+      dstField: _raw
+      fields:
+        - buffers
+        - channel
+        - cid
+        - inFlightRequest
+        - ioName
+        - ioType
+        - level
+        - message
+        - error*
+        - kube_image
+        - kube_node
+        - kube_owner_*
+        - kube_pod
+        - log_*
+    description: Serialize the processed log into JSON format
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      keep:
+        - _raw
+        - cribl_*
+        - _time
+        - kube_namespace
+        - kube_pod_*
+        - kube_container
+        - source
+        - sourcetype
+        - host
+      remove:
+        - "*"
+    description: Remove unneeded fields
+description: ""

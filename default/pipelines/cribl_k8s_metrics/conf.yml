@@ -1,0 +1,26 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Process K8S metrics
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "DPM: Not sure how to make rename work on metrics (can it?)"
+  - id: rename
+    filter: "true"
+    disabled: null
+    conf:
+      wildcardDepth: 5
+      renameExpr: "name.Startswith('kube_') ? name.replace(/_/, '.') : name"
+      rename: []
+      baseFields:
+        - kube_*
+    description: Rename metrics from snake_case to dot.notation
+description: ""

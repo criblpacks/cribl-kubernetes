@@ -1,0 +1,41 @@
+id: default
+groups: {}
+comments:
+  - id: MIgjzd
+    comment: Routes for processing K8S logs, events, and metrics collected via Cribl
+      Edge
+    index: 0
+routes:
+  - id: orxjRr
+    name: cribl_k8s_logs_route
+    final: true
+    disabled: false
+    pipeline: cribl_k8s_logs
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: kube_namespace!=null
+    clones: []
+    output: default
+  - id: wLlBnY
+    name: cribl_k8s_events_route
+    final: true
+    disabled: false
+    pipeline: cribl_k8s_events
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: _raw.includes('events.k8s.io')
+    clones: []
+    output: default
+  - id: D1J9dl
+    name: cribl_k8s_metrics_route
+    final: true
+    disabled: false
+    pipeline: cribl_k8s_metrics
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: kube_namespace==null
+    clones: []
+    output: default
