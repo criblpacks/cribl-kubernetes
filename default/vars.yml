@@ -1,0 +1,8 @@
+cribl_k8s_output_logs_to_lake:
+  type: number
+  lib: custom
+  value: "1"
+cribl_k8s_output_metrics_to_lake:
+  type: number
+  lib: custom
+  value: "1"

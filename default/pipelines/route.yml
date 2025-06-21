@@ -16,7 +16,7 @@ routes:
     outputExpression: null
     filter: kube_namespace!=null
     clones: []
-    output: default
+    output: cribl-k8s-output-router
   - id: wLlBnY
     name: cribl_k8s_events_route
     final: true
@@ -27,7 +27,7 @@ routes:
     outputExpression: null
     filter: _raw.includes('events.k8s.io')
     clones: []
-    output: default
+    output: cribl-k8s-output-router
   - id: D1J9dl
     name: cribl_k8s_metrics_route
     final: true
@@ -38,4 +38,4 @@ routes:
     outputExpression: null
     filter: kube_namespace==null
     clones: []
-    output: default
+    output: cribl-k8s-output-router

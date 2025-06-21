@@ -1,0 +1,81 @@
+outputs:
+  k8s_logs:
+    systemFields:
+      - cribl_pipe
+    streamtags: []
+    signatureVersion: v4
+    reuseConnections: true
+    rejectUnauthorized: true
+    enableAssumeRole: false
+    durationSeconds: 3600
+    stagePath: $CRIBL_HOME/state/outputs/staging
+    addIdToStagePath: true
+    objectACL: private
+    removeEmptyDirs: true
+    baseFileName: "`CriblOut`"
+    fileNameSuffix: '`.${C.env["CRIBL_WORKER_ID"]}.${__format}${__compression ===
+      "gzip" ? ".gz" : ""}`'
+    maxFileSizeMB: 32
+    maxOpenFiles: 100
+    headerLine: ""
+    writeHighWaterMark: 64
+    onBackpressure: block
+    deadletterEnabled: false
+    onDiskFullBackpressure: block
+    maxFileOpenTimeSec: 300
+    maxFileIdleTimeSec: 30
+    verifyPermissions: true
+    maxClosingFilesToBackpressure: 100
+    awsAuthenticationMethod: auto
+    maxConcurrentFileParts: 1
+    emptyDirCleanupSec: 300
+    type: cribl_lake
+    destPath: k8s_logs
+    description: Lake destination for K8S logs
+    compress: gzip
+  k8s_metrics:
+    systemFields:
+      - cribl_pipe
+    streamtags: []
+    signatureVersion: v4
+    reuseConnections: true
+    rejectUnauthorized: true
+    enableAssumeRole: false
+    durationSeconds: 3600
+    stagePath: $CRIBL_HOME/state/outputs/staging
+    addIdToStagePath: true
+    objectACL: private
+    removeEmptyDirs: true
+    baseFileName: "`CriblOut`"
+    fileNameSuffix: '`.${C.env["CRIBL_WORKER_ID"]}.${__format}${__compression ===
+      "gzip" ? ".gz" : ""}`'
+    maxFileSizeMB: 32
+    maxOpenFiles: 100
+    headerLine: ""
+    writeHighWaterMark: 64
+    onBackpressure: block
+    deadletterEnabled: false
+    onDiskFullBackpressure: block
+    maxFileOpenTimeSec: 300
+    maxFileIdleTimeSec: 30
+    verifyPermissions: true
+    maxClosingFilesToBackpressure: 100
+    awsAuthenticationMethod: auto
+    maxConcurrentFileParts: 1
+    emptyDirCleanupSec: 300
+    type: cribl_lake
+    destPath: k8s_metrics
+    description: Lake destination for K8S metrics
+    compress: gzip
+  cribl-k8s-output-router:
+    systemFields:
+      - cribl_pipe
+    streamtags: []
+    rules:
+      - final: true
+        filter: C.vars.cribl_k8s_output_logs_to_lake==1
+        output: k8s_logs
+      - final: true
+        filter: C.vars.cribl_k8s_output_metrics_to_lake==1
+        output: k8s_metrics
+    type: router
