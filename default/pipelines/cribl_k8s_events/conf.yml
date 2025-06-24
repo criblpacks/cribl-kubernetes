@@ -3,7 +3,7 @@ streamtags: []
 groups:
   7b7zGc:
     name: Extract involvedObject
-    index: 5
+    index: 4
 asyncFuncTimeout: 1000
 functions:
   - id: comment
@@ -11,18 +11,6 @@ functions:
     disabled: null
     conf:
       comment: Process K8S Event logs
-  - id: eval
-    filter: "true"
-    disabled: null
-    conf:
-      add:
-        - disabled: false
-          name: sourcetype
-          value: "'k8s:logs'"
-        - disabled: false
-          name: source
-          value: "'k8s-logs'"
-    description: Add common fields
   - id: serde
     filter: "true"
     disabled: false
@@ -111,4 +99,16 @@ functions:
       remove:
         - "*"
     description: Removed unneeded fields
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: sourcetype
+          value: C.vars.k8s_events_sourcetype || 'k8s:events'
+        - disabled: false
+          name: source
+          value: C.vars.k8s_events_source || 'edge-k8s-events'
+    description: Add common fields
 description: ""

@@ -12,30 +12,30 @@ routes:
     disabled: false
     pipeline: cribl_k8s_logs
     description: ""
-    enableOutputExpression: false
-    outputExpression: null
+    enableOutputExpression: true
+    outputExpression: C.vars.cribl_k8s_output_logs_to_lake || 'null:null'
     filter: kube_namespace!=null
     clones: []
-    output: cribl-k8s-output-router
+    output: k8s_logs
   - id: wLlBnY
     name: cribl_k8s_events_route
     final: true
     disabled: false
     pipeline: cribl_k8s_events
     description: ""
-    enableOutputExpression: false
-    outputExpression: null
+    enableOutputExpression: true
+    outputExpression: C.vars.cribl_k8s_output_events_to_lake || 'null:null'
     filter: _raw.includes('events.k8s.io')
     clones: []
-    output: cribl-k8s-output-router
+    output: k8s_events
   - id: D1J9dl
     name: cribl_k8s_metrics_route
     final: true
     disabled: false
     pipeline: cribl_k8s_metrics
     description: ""
-    enableOutputExpression: false
-    outputExpression: null
+    enableOutputExpression: true
+    outputExpression: C.vars.cribl_k8s_output_metrics_to_lake || 'null:null'
     filter: kube_namespace==null
     clones: []
-    output: cribl-k8s-output-router
+    output: k8s_metrics

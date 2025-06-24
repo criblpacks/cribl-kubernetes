@@ -2,7 +2,9 @@
 
 ## About this Pack
 
-This pack handles logs from Kubernetes environments, including logs from control plane components, nodes, and containers. It is designed to:
+This pack handles logs from Kubernetes (K8S) environments sent via Cribl Edge. It is designed to:
+
+* TODO!
 
 * Normalize and enrich Kubernetes logs with contextual metadata (e.g., cluster, namespace, pod, container name).
 * Support different input formats: JSON, CRI-O-style logs, and standard container output.
@@ -94,38 +96,4 @@ This Pack uses the following license: [Apache 2.0](https://github.com/criblio/ap
 
 ---
 
-## Event Breaker
-
-Under **Knowledge > Event Breakers**, add a new rule for JSON-formatted Kubernetes logs:
-
-```json
-{
-  "minRawLength": 128,
-  "id": "Kubernetes JSON Event Breaker",
-  "rules": [
-    {
-      "condition": "_raw.includes(\"log\":) && _raw.includes(\"kubernetes\")",
-      "type": "json",
-      "timestampAnchorRegex": "/\\\"time\\\":\\\"/",
-      "timestamp": {
-        "type": "format",
-        "length": 100,
-        "format": "%Y-%m-%dT%H:%M:%S.%LZ"
-      },
-      "timestampTimezone": "utc",
-      "timestampEarliest": "-1weeks",
-      "timestampLatest": "+1week",
-      "maxEventBytes": 10485760,
-      "disabled": false,
-      "parserEnabled": false,
-      "shouldUseDataRaw": false,
-      "jsonExtractAll": true,
-      "eventBreakerRegex": "/[\\n\\r]+(?!\\s)/",
-      "name": "Kubernetes JSON Logs"
-    }
-  ],
-  "description": "Breaker for Kubernetes container logs in JSON format",
-  "tags": "rest,json,kubernetes"
-}
-```
 

@@ -15,12 +15,39 @@ functions:
       comment: "DPM: Not sure how to make rename work on metrics (can it?)"
   - id: rename
     filter: "true"
-    disabled: null
+    disabled: true
     conf:
       wildcardDepth: 5
-      renameExpr: "name.Startswith('kube_') ? name.replace(/_/, '.') : name"
+      renameExpr: "name.startsWith('kube_') ? name.replaceAll('_', '.') : name"
       rename: []
-      baseFields:
-        - kube_*
+      baseFields: []
     description: Rename metrics from snake_case to dot.notation
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: The expressions work in Advanced Mode but the underscores remain
+  - id: publish_metrics
+    filter: "true"
+    disabled: false
+    conf:
+      overwrite: true
+      dimensions:
+        - "!_*"
+        - "!cribl*"
+        - namespace
+        - configmap
+        - host
+      removeMetrics: []
+      removeDimensions: []
+      fields:
+        - metricType: counter
+          inFieldName: kube.configmap.created
+          outFieldExpr: kube_configmap_created
+        - metricType: counter
+          inFieldName: kube.configmap.info
+          outFieldExpr: kube_configmap_info
+        - metricType: counter
+          inFieldName: kube.configmap.metadata.resource.version
+          outFieldExpr: kube_configmap_metadata_resource_version
 description: ""

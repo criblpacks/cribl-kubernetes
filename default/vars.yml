@@ -1,8 +1,31 @@
 cribl_k8s_output_logs_to_lake:
   type: number
   lib: custom
-  value: "1"
+  value: "'k8s_logs'"
+  description: Name of the Cribl Lake destination for K8S logs
 cribl_k8s_output_metrics_to_lake:
   type: number
   lib: custom
-  value: "1"
+  value: "'k8s_metrics'"
+  description: Name of the Cribl Lake destination for K8S metrics
+cribl_k8s_output_events_to_lake:
+  type: any
+  lib: custom
+  value: "'k8s_events'"
+  description: Name of the Cribl Lake destination for K8S events
+k8s_logs_sourcetype:
+  type: any
+  lib: custom
+  value: "'k8s:logs'"
+k8s_logs_source:
+  type: any
+  lib: custom
+  value: "'edge-k8s-logs-' + kube_namespace + '-' + kube_pod"
+k8s_events_sourcetype:
+  type: any
+  lib: custom
+  value: "'k8s:events'"
+k8s_events_source:
+  type: any
+  lib: custom
+  value: "'edge-k8s-events'"

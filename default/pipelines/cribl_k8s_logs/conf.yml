@@ -4,6 +4,10 @@ groups:
   iANlpn:
     name: Parse _raw depending on the format
     index: 4
+  VIoVOq:
+    name: Output Functions
+    index: 11
+    disabled: true
 asyncFuncTimeout: 1000
 functions:
   - id: comment
@@ -15,31 +19,23 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      comment: Likely want to move this into a separate pipeline
-  - id: eval
+      comment: For additional details, see this pack's README under Pack Settings.
+  - id: comment
     filter: "true"
     disabled: null
     conf:
-      add:
-        - disabled: false
-          name: sourcetype
-          value: "'k8s:logs'"
-        - disabled: false
-          name: source
-          value: "'edge-k8s-logs-' + kube_namespace + '-' + kube_pod"
-    description: Set common fields
+      comment: "Author: Cribl"
   - id: comment
     filter: "true"
     disabled: null
     conf:
       comment: |-
-        _raw can come in one of three formats:
+        K8S logs _raw can come in one of two formats:
         * JSON
         * log_level+type+JSON
-        * single line text
   - id: regex_extract
     filter: _raw.match(/\s+\w+\s+\w+\s+{/)
-    disabled: null
+    disabled: false
     conf:
       source: _raw
       iterations: 100
@@ -49,7 +45,7 @@ functions:
     description: Parse log_level+type+JSON
   - id: serde
     filter: __raw!=null
-    disabled: null
+    disabled: false
     conf:
       mode: extract
       type: json
@@ -58,7 +54,7 @@ functions:
     description: Parse the JSON from a log_level+type+JSON log
   - id: serde
     filter: _raw.startsWith("{")
-    disabled: null
+    disabled: false
     conf:
       mode: extract
       type: json
@@ -70,7 +66,7 @@ functions:
     description: Parse JSON _raw logs
   - id: eval
     filter: '!_raw.startsWith("{") && __raw==null'
-    disabled: null
+    disabled: true
     conf:
       add:
         - disabled: false
@@ -104,36 +100,78 @@ functions:
       type: json
       dstField: _raw
       fields:
-        - buffers
-        - channel
-        - cid
-        - inFlightRequest
-        - ioName
-        - ioType
-        - level
-        - message
-        - error*
-        - kube_image
-        - kube_node
-        - kube_owner_*
-        - kube_pod
-        - log_*
+        - "!_*"
+        - "!cribl*"
+        - "!source"
+        - "!sourcetype"
+        - "!host"
+        - "!kube_namespace"
+        - "!kube_pod_labels*"
+        - "!kube_container"
+        - "*"
     description: Serialize the processed log into JSON format
   - id: eval
     filter: "true"
-    disabled: null
+    disabled: false
     conf:
       keep:
+        - _time
         - _raw
         - cribl_*
-        - _time
         - kube_namespace
-        - kube_pod_*
         - kube_container
         - source
         - sourcetype
         - host
+        - kube_pod_labels*
       remove:
         - "*"
     description: Remove unneeded fields
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: sourcetype
+          value: C.vars.k8s_logs_sourcetype || 'k8s:logs'
+        - disabled: false
+          name: source
+          value: C.vars.k8s_logs_source || 'edge-k8s-logs-' + kube_namespace + '-' +
+            kube_pod
+    description: Set common fields
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        Output functions:
+
+        Outputs are all enabled by default but controlled by Variables that default to 0 (false). Set them to 1 to enable an output. 
+  - id: comment
+    filter: "true"
+    disabled: true
+    conf:
+      comment: Output K8S logs and events to Cribl Lake. Ensure the dataset on the
+        "k8s_logs" destination has been created.
+    groupId: VIoVOq
+  - id: chain
+    filter: C.vars.cribl_k8s_output_logs_to_lake==1
+    disabled: true
+    conf:
+      processor: cribl_k8s_logs_lake_output
+    groupId: VIoVOq
+  - id: comment
+    filter: "true"
+    disabled: true
+    conf:
+      comment: Output K8S metrics to Cribl Lake. Ensure the dataset on the
+        "k8s_metrics" destination has been created.
+    groupId: VIoVOq
+  - id: chain
+    filter: C.vars.cribl_k8s_output_metrics_to_lake==1
+    disabled: true
+    conf:
+      processor: cribl_k8s_metrics_lake_output
+    groupId: VIoVOq
 description: ""
