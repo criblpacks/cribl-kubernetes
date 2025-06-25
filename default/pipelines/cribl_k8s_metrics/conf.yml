@@ -22,6 +22,14 @@ functions:
       rename: []
       baseFields: []
     description: Rename metrics from snake_case to dot.notation
+  - id: eval
+    filter: "true"
+    disabled: true
+    conf:
+      add:
+        - disabled: false
+          name: __criblMetrics[0].values
+          value: "value.startsWith('kube_') ? value.replaceAll('_', '.') : value"
   - id: comment
     filter: "true"
     disabled: null
@@ -29,7 +37,7 @@ functions:
       comment: The expressions work in Advanced Mode but the underscores remain
   - id: publish_metrics
     filter: "true"
-    disabled: false
+    disabled: true
     conf:
       overwrite: true
       dimensions:
@@ -42,8 +50,8 @@ functions:
       removeDimensions: []
       fields:
         - metricType: counter
-          inFieldName: kube.configmap.created
-          outFieldExpr: kube_configmap_created
+          inFieldName: kube_configmap_created
+          outFieldExpr: kube.configmap.created
         - metricType: counter
           inFieldName: kube.configmap.info
           outFieldExpr: kube_configmap_info

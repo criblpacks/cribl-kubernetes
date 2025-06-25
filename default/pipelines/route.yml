@@ -5,7 +5,23 @@ comments:
     comment: Routes for processing K8S logs, events, and metrics collected via Cribl
       Edge
     index: 0
+  - id: GmGjLm
+    comment: "Route logs from Edge nodes running in K8S. Change the Variable of you
+      are using a different container name. "
+    index: 1
 routes:
+  - id: KRh0CX
+    name: cribl_k8s_edge_logs_toute
+    final: false
+    disabled: false
+    pipeline: cribl_k8s_edge_logs
+    description: Route logs from Edge nodes running in K8S.
+    enableOutputExpression: true
+    outputExpression: C.vars.cribl_k8s_output_logs_to_lake || 'null:null'
+    filter: kube_container==C.vars.edge_kube_container
+    clones:
+      - {}
+    output: k8s_logs
   - id: orxjRr
     name: cribl_k8s_logs_route
     final: true

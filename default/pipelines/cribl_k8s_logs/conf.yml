@@ -3,7 +3,7 @@ streamtags: []
 groups:
   iANlpn:
     name: Parse _raw depending on the format
-    index: 4
+    index: 5
   VIoVOq:
     name: Output Functions
     index: 11
@@ -25,6 +25,11 @@ functions:
     disabled: null
     conf:
       comment: "Author: Cribl"
+  - id: drop
+    filter: kube_container==C.vars.edge_kube_container
+    disabled: null
+    conf: {}
+    description: Do not process Edge logs - they are handled in another pipeline
   - id: comment
     filter: "true"
     disabled: null
@@ -40,33 +45,12 @@ functions:
       source: _raw
       iterations: 100
       overwrite: true
-      regex: /\s+(?<log_level>\w+)\s+(?<log_type>\w+)\s+(?<__raw>.+)/
+      regex: /\s+(?<log_level>\w+)\s+(?<log_type>\w+)\s+(?<_json>.+)/
     groupId: iANlpn
     description: Parse log_level+type+JSON
-  - id: serde
-    filter: __raw!=null
-    disabled: false
-    conf:
-      mode: extract
-      type: json
-      srcField: __raw
-    groupId: iANlpn
-    description: Parse the JSON from a log_level+type+JSON log
-  - id: serde
-    filter: _raw.startsWith("{")
-    disabled: false
-    conf:
-      mode: extract
-      type: json
-      srcField: _raw
-      remove:
-        - _raw
-      fieldFilterExpr: value !== '' && value !== null
-    groupId: iANlpn
-    description: Parse JSON _raw logs
   - id: eval
-    filter: '!_raw.startsWith("{") && __raw==null'
-    disabled: true
+    filter: _json==null
+    disabled: false
     conf:
       add:
         - disabled: false
@@ -74,25 +58,6 @@ functions:
           value: _raw
     groupId: iANlpn
     description: Set the message field to _raw for non-JSON logs
-  - id: comment
-    filter: "true"
-    disabled: null
-    conf:
-      comment: The time field should be in UTC
-  - id: auto_timestamp
-    filter: _raw.startsWith("{")
-    disabled: null
-    conf:
-      srcField: time
-      dstField: _time
-      defaultTimezone: UTC
-      timeExpression: time.getTime() / 1000
-      offset: 0
-      maxLen: 150
-      defaultTime: now
-      latestDateAllowed: +1week
-      earliestDateAllowed: -420weeks
-    description: Only apply to JSON formatted logs because they have a reliable time field
   - id: serialize
     filter: "true"
     disabled: false
@@ -140,6 +105,11 @@ functions:
           value: C.vars.k8s_logs_source || 'edge-k8s-logs-' + kube_namespace + '-' +
             kube_pod
     description: Set common fields
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "DPM: Placeholder but will likely delete"
   - id: comment
     filter: "true"
     disabled: null

@@ -31,3 +31,14 @@ BXduDy:
   created: 1750459976339
   size: 220501
   numEvents: 250
+HmvRZF:
+  sampleName: 10kCapture6.24.log
+  created: 1750808325919
+  size: 703263
+  numEvents: 438
+LvHnJT:
+  sampleName: k8s-all-minikube.log
+  ttl: 0
+  created: 1750810963023
+  size: 94196
+  numEvents: 50

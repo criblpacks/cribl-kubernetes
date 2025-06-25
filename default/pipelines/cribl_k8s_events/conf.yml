@@ -3,7 +3,7 @@ streamtags: []
 groups:
   7b7zGc:
     name: Extract involvedObject
-    index: 4
+    index: 5
 asyncFuncTimeout: 1000
 functions:
   - id: comment
@@ -11,6 +11,11 @@ functions:
     disabled: null
     conf:
       comment: Process K8S Event logs
+  - id: drop
+    filter: "!_raw.includes('events.k8s.io')"
+    disabled: null
+    conf: {}
+    description: Drop all non-K8S event data
   - id: serde
     filter: "true"
     disabled: false

@@ -29,3 +29,16 @@ k8s_events_source:
   type: any
   lib: custom
   value: "'edge-k8s-events'"
+edge_kube_container:
+  type: any
+  lib: custom
+  value: "'edge'"
+  description: The K8S container running Edge nodes.
+k8s_edge_logs_sourcetype:
+  type: any
+  lib: custom
+  value: "'k8s:edge:logs'"
+k8s_edge_logs_source:
+  type: any
+  lib: custom
+  value: "'edge-k8s-logs-' + kube_namespace + '-' + kube_pod"
