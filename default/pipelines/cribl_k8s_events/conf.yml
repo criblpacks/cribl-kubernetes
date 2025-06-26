@@ -1,16 +1,23 @@
 output: default
 streamtags: []
-groups:
-  7b7zGc:
-    name: Extract involvedObject
-    index: 5
+groups: {}
 asyncFuncTimeout: 1000
 functions:
   - id: comment
     filter: "true"
     disabled: null
     conf:
-      comment: Process K8S Event logs
+      comment: Process JSON K8S Events sent from the Cribl Edge container
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: For additional details, see this pack's README under Pack Settings.
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Author: Cribl Packs Team"
   - id: drop
     filter: "!_raw.includes('events.k8s.io')"
     disabled: null
@@ -46,34 +53,20 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      comment: Extract the involvedObject field if present, assign a default otherwise
-  - id: comment
-    filter: "true"
-    disabled: null
-    conf:
-      comment: "Note: The samples we have do not have a value for involvedObject"
-    groupId: 7b7zGc
-  - id: regex_extract
-    filter: "true"
-    disabled: null
-    conf:
-      source: _raw
-      iterations: 100
-      overwrite: false
-      regex: /involvedObject..:{(?<involvedObject>[^}]+)/
-    groupId: 7b7zGc
+      comment: "Note: Edge K8S events do not have a value for involvedObject but
+        metadata.name has the same value"
   - id: eval
     filter: "true"
     disabled: null
     conf:
       add:
         - disabled: false
-          name: message
-          value: note
-        - disabled: false
           name: involvedObject
-          value: "involvedObject==null ? metadata.name : involvedObject"
-    groupId: 7b7zGc
+          value: metadata.name
+        - disabled: false
+          name: kube_namespace
+          value: object.regarding.name
+    description: Assign involvedObject, namespace, and message
   - id: serialize
     filter: "true"
     disabled: false
@@ -81,11 +74,17 @@ functions:
       type: json
       dstField: _raw
       fields:
-        - apiVersion
-        - kind
-        - metadata*
-        - reguarding*
-        - reporting*
+        - "!_*"
+        - "!cribl*"
+        - "!source"
+        - "!sourcetype"
+        - "!host"
+        - "!type"
+        - "!involvedObject"
+        - "!kube_node"
+        - "!kube_namespace"
+        - "!reason"
+        - "*"
     description: Serializes the JSON object into _raw
   - id: eval
     filter: "true"
@@ -98,9 +97,11 @@ functions:
         - source
         - sourcetype
         - host
-        - message
         - reason
         - involvedObject
+        - type
+        - message
+        - kube_*
       remove:
         - "*"
     description: Removed unneeded fields

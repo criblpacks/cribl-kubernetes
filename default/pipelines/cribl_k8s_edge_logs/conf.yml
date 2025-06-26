@@ -17,7 +17,7 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      comment: "Author: Cribl"
+      comment: "Author: Cribl Packs Team"
   - id: serde
     filter: _raw.startsWith("{")
     disabled: null

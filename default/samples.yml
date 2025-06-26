@@ -42,3 +42,32 @@ LvHnJT:
   created: 1750810963023
   size: 94196
   numEvents: 50
+dfCQVL:
+  sampleName: k8s-minkube-500
+  ttl: 0
+  created: 1750872715603
+  size: 824444
+  numEvents: 500
+U8agjU:
+  sampleName: k8s-minikube-events.json
+  created: 1750874480291
+  size: 15415
+  numEvents: 6
+FUR0ir:
+  sampleName: k8s-minikube-500-metrics
+  ttl: 0
+  created: 1750879130971
+  size: 489009
+  numEvents: 500
+iNKbOB:
+  sampleName: k8s-metrics-1k
+  ttl: 0
+  created: 1750879239714
+  size: 5069149
+  numEvents: 5000
+7CsblM:
+  sampleName: k8s-minikube-bookinfo
+  ttl: 0
+  created: 1750886766145
+  size: 868331
+  numEvents: 462

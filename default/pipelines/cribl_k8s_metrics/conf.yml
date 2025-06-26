@@ -12,10 +12,15 @@ functions:
     filter: "true"
     disabled: null
     conf:
+      comment: "Author: Cribl Packs Team"
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
       comment: "DPM: Not sure how to make rename work on metrics (can it?)"
   - id: rename
     filter: "true"
-    disabled: true
+    disabled: false
     conf:
       wildcardDepth: 5
       renameExpr: "name.startsWith('kube_') ? name.replaceAll('_', '.') : name"
@@ -50,12 +55,12 @@ functions:
       removeDimensions: []
       fields:
         - metricType: counter
-          inFieldName: kube_configmap_created
+          inFieldName: kube.configmap.created
           outFieldExpr: kube.configmap.created
         - metricType: counter
           inFieldName: kube.configmap.info
-          outFieldExpr: kube_configmap_info
+          outFieldExpr: kube.configmap.info
         - metricType: counter
           inFieldName: kube.configmap.metadata.resource.version
-          outFieldExpr: kube_configmap_metadata_resource_version
+          outFieldExpr: kube.configmap.metadata.resource.version
 description: ""

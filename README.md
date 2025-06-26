@@ -4,15 +4,16 @@
 
 This pack handles logs from Kubernetes (K8S) environments sent via Cribl Edge. It is designed to:
 
-* TODO!
+* Provide basic processing of all logs sent via Cribl Edge.
+  * All logs sent as JSON inside _raw along with important fields.
+  * Logs from the Edge container are processed as JSON.
+  * Logs from other containers that contain JSON have that JSON extracted and processed.
+  * Other logs encapsulated into a `message` field
+* Process K8S Events into JSON
+* Process and rename K8S Metrics
+* Built-in support for Cribl HTTP Source and Cribl Lake Destination for all logs.
 
-* Normalize and enrich Kubernetes logs with contextual metadata (e.g., cluster, namespace, pod, container name).
-* Support different input formats: JSON, CRI-O-style logs, and standard container output.
-* Enable log reduction by trimming verbose fields, standardizing timestamps, and optionally dropping less critical messages such as debug-level logs.
-* Allow for flexible routing of logs to appropriate pipelines or destinations based on source, cluster, or workload.
-* Add filters to the pipelines as desired to drop events based on field content or log severity.
-
-Route your Kubernetes logs to the pack using Cribl Stream routes or Quick Connect, and select appropriate output formats for downstream consumers like Splunk, Elasticsearch, or S3.
+Note that this pack *requires* that all data be sent via Cribl Edge - see deployment section for details. 
 
 ---
 
@@ -22,35 +23,38 @@ This pack supports logs delivered in JSON or plaintext formats, typically collec
 
 ### 1. Configure the Pack
 
-This pack includes several functions that normalize Kubernetes logs, extract structured fields, and enrich events with metadata.
+#### Source
+The pack comes pre-configured with a Cribl HTTP input called `cribl-http-k8s`. Update it's configuration (Address/Port/TLS, etc) to accept Edge connections from your Fleet(s).
 
-* Use reduction functions to minimize the volume of less useful logs (e.g., container stdout noise, control plane debug logs).
-* Only enable one output format at a time. Multiple active outputs may interfere with formatting.
-* Configure the global variable `k8s_default_cluster` for cases where cluster name is not available in logs.
+Note that while other Sources may work, the pack has only been tested against Cribl HTTP.
 
-### 2. Configure the Collector
+#### Destination
+The pack comes pre-configured with three Cribl Lake Destinations:
+* `k8s_logs` - uses dataset names *k8s_logs*.
+* `k8s_events` - uses dataset names *k8s_events*.
+* `k8s_metrics` - uses dataset names *k8s_metrics*.
 
-Configure your Kubernetes log collector (e.g., Fluent Bit or REST API log forwarder) to send data to Cribl Stream:
+You must create (or modify) the datasets before data will flow.
 
-1. Ensure logs are tagged with necessary context (e.g., `pod_name`, `namespace`, `container_name`, `log`).
-2. For file-based log delivery (e.g., `/var/log/containers/*.log`), ensure proper multiline event breaking.
-3. If JSON-formatted logs are used, use a matching Event Breaker to extract individual log lines from arrays.
-4. Sample Fluent Bit configuration:
+#### Variables
 
-   * Input: tail logs from `/var/log/containers/*.log`
-   * Output: HTTP or TCP to Cribl Stream
-   * Enable Kubernetes filter plugin to add labels and pod metadata
+This pack includes several variables that have reasonable defaults but should be verified:
 
-### 3. Tie the Pack to Kubernetes Logs
+* `edge_kube_container` - Container name for Crible Edge
+* `cribl_k8s_output_logs_to_lake` - Dataset name for K8S logs output to Cribl Lake
+* `cribl_k8s_output_metrics_to_lake` - Dataset name for K8S metrics output to Cribl Lake
+* `cribl_k8s_output_events_to_lake` - Dataset name for K8S events output to Cribl Lake
+* `k8s_logs_sourcetype` - Default sourcetype for K8S logs
+* `k8s_logs_source` - Default source for K8S logs
+* `k8s_events_sourcetype` - Default sourcetype for K8S events
+* `k8s_events_source` - Default source for K8S events
+* `k8s_edge_logs_sourcetype` - Default sourcetype for K8S logs received from the Crible Edge container
+* `k8s_edge_logs_source` - Default sourcetype for K8S logs received from the Crible Edge container
 
-#### Send to Routes
 
-1. In your Routes, select the `[Pack] cribl-kubernetes (Cribl Kubernetes Pack)` pipeline.
+### 2. Configure Cribl Edge
 
-#### Inline
-
-1. For Pipeline, select `[Pack] cribl-kubernetes (Cribl Kubernetes Pack)` pipeline.
-2. For Destination, select your desired destination (e.g., Splunk, S3, Cribl Edge).
+Deploy Cribl Edge into each K8S Cluster for which you want to process data according to the [Cribl Edge Docs](https://docs.cribl.io/edge/usecase-kubernetes-observability/#deploy-cribl-edge-via-kubernetes). 
 
 ---
 
@@ -65,10 +69,9 @@ Upgrading certain Cribl Packs using the same Pack ID can have unintended consequ
 ### Version 1.0.0
 
 * Initial release
-* Added support for structured and unstructured Kubernetes log formats
-* Added enrichment functions for cluster, pod, namespace, and container metadata
-* Created reduction logic to filter and trim common noisy fields
-* Sample routes and global variables included
+* Supports K8S logs, events, and metrics delivered via Cribl Edge over Cribl HTTP.
+* Supports the Cribl HTTP Source (included)
+* Supports the Cribl Lake Destination (included)
 
 ---
 

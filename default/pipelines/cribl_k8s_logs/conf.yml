@@ -4,10 +4,6 @@ groups:
   iANlpn:
     name: Parse _raw depending on the format
     index: 5
-  VIoVOq:
-    name: Output Functions
-    index: 11
-    disabled: true
 asyncFuncTimeout: 1000
 functions:
   - id: comment
@@ -24,7 +20,7 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      comment: "Author: Cribl"
+      comment: "Author: Cribl Packs Team"
   - id: drop
     filter: kube_container==C.vars.edge_kube_container
     disabled: null
@@ -72,6 +68,7 @@ functions:
         - "!host"
         - "!kube_namespace"
         - "!kube_pod_labels*"
+        - log_*
         - "!kube_container"
         - "*"
     description: Serialize the processed log into JSON format
@@ -89,6 +86,7 @@ functions:
         - sourcetype
         - host
         - kube_pod_labels*
+        - log_*
       remove:
         - "*"
     description: Remove unneeded fields
@@ -105,43 +103,4 @@ functions:
           value: C.vars.k8s_logs_source || 'edge-k8s-logs-' + kube_namespace + '-' +
             kube_pod
     description: Set common fields
-  - id: comment
-    filter: "true"
-    disabled: null
-    conf:
-      comment: "DPM: Placeholder but will likely delete"
-  - id: comment
-    filter: "true"
-    disabled: null
-    conf:
-      comment: >-
-        Output functions:
-
-        Outputs are all enabled by default but controlled by Variables that default to 0 (false). Set them to 1 to enable an output. 
-  - id: comment
-    filter: "true"
-    disabled: true
-    conf:
-      comment: Output K8S logs and events to Cribl Lake. Ensure the dataset on the
-        "k8s_logs" destination has been created.
-    groupId: VIoVOq
-  - id: chain
-    filter: C.vars.cribl_k8s_output_logs_to_lake==1
-    disabled: true
-    conf:
-      processor: cribl_k8s_logs_lake_output
-    groupId: VIoVOq
-  - id: comment
-    filter: "true"
-    disabled: true
-    conf:
-      comment: Output K8S metrics to Cribl Lake. Ensure the dataset on the
-        "k8s_metrics" destination has been created.
-    groupId: VIoVOq
-  - id: chain
-    filter: C.vars.cribl_k8s_output_metrics_to_lake==1
-    disabled: true
-    conf:
-      processor: cribl_k8s_metrics_lake_output
-    groupId: VIoVOq
 description: ""
