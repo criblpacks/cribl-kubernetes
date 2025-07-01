@@ -1,0 +1,48 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: |-
+        Filter K8S logs as needed.
+        Available fields: 
+        * log_level, log_type, and _json for logs containing JSON
+        * message for non-JSON events
+        * _raw for all events
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Filtering logic should be added to this pipeline - this avoids needing
+        to modify the default Pack pipeline
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: DO NOT USE FINAL! If you do then processing stops and the rest of the
+        K9S pipeline will not run!
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Author: Cribl Packs Team"
+  - id: drop
+    filter: log_level=='info' || log_level=='debug' || log_type=='Traces'
+    disabled: true
+    conf: {}
+    description: Filter out debug and informational messages
+  - id: drop
+    filter: kube_namespace=='default'
+    disabled: null
+    conf: {}
+    description: Filter by any kube_* field
+  - id: drop
+    filter: "true"
+    disabled: true
+    conf: {}
+    description: Filter NGINX logs
+description: Pipeline to add custom filtering logic to K8S logs

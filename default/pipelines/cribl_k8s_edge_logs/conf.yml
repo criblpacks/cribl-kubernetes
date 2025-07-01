@@ -26,6 +26,7 @@ functions:
       type: json
       srcField: _raw
       fieldFilterExpr: value !== '' && value !== null
+    description: Parse the JSON _raw field
   - id: auto_timestamp
     filter: "true"
     disabled: null
@@ -39,6 +40,7 @@ functions:
       defaultTime: now
       latestDateAllowed: +1week
       earliestDateAllowed: -420weeks
+    description: Use the time field as the timestamp
   - id: serialize
     filter: "true"
     disabled: null
@@ -50,10 +52,8 @@ functions:
         - "!cribl*"
         - "!source"
         - "!sourcetype"
+        - "!kube_*"
         - "!host"
-        - "!kube_namespace"
-        - "!kube_pod_labels*"
-        - "!kube_container"
         - "*"
     description: Serialize the processed log into JSON format
   - id: eval
@@ -61,29 +61,21 @@ functions:
     disabled: null
     conf:
       keep:
-        - _time
-        - _raw
+        - _*
         - cribl_*
-        - kube_namespace
-        - kube_container
         - source
         - sourcetype
         - host
-        - kube_pod_labels*
+        - kube_*
       remove:
         - "*"
-    description: Remove unneeded fields
-  - id: eval
-    filter: "true"
-    disabled: null
-    conf:
       add:
         - disabled: false
-          name: sourcetype
           value: C.vars.k8s_edge_logs_sourcetype || 'k8s:edge:logs'
+          name: sourcetype
         - disabled: false
-          name: source
           value: C.vars.k8s_edge_logs_source || 'edge-k8s-logs-' + kube_namespace + '-' +
             kube_pod
-    description: Set common fields
+          name: source
+    description: Remove unneeded fields and set common fields
 description: Process JSON logs sent from Edge nodes monitoring K8S

@@ -36,6 +36,8 @@ The pack comes pre-configured with three Cribl Lake Destinations:
 
 You must create (or modify) the datasets before data will flow.
 
+If you want to send to a Destination other than Cribl Lake, change the variable to the name of that Destination. You may need to modify the output format in, though. We recommend to *not* modify the Pack's pipelines but use a post-processing pipeline instead.
+
 #### Variables
 
 This pack includes several variables that have reasonable defaults but should be verified:

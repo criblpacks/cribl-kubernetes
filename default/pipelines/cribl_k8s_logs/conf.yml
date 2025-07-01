@@ -1,9 +1,6 @@
 output: default
 streamtags: []
-groups:
-  iANlpn:
-    name: Parse _raw depending on the format
-    index: 5
+groups: {}
 asyncFuncTimeout: 1000
 functions:
   - id: comment
@@ -21,19 +18,12 @@ functions:
     disabled: null
     conf:
       comment: "Author: Cribl Packs Team"
-  - id: drop
-    filter: kube_container==C.vars.edge_kube_container
-    disabled: null
-    conf: {}
-    description: Do not process Edge logs - they are handled in another pipeline
   - id: comment
     filter: "true"
     disabled: null
     conf:
-      comment: |-
-        K8S logs _raw can come in one of two formats:
-        * JSON
-        * log_level+type+JSON
+      comment: I would consider trying to use Grok instead of Regex Extract, in my
+        experience it has shown to be more performant
   - id: regex_extract
     filter: _raw.match(/\s+\w+\s+\w+\s+{/)
     disabled: false
@@ -42,8 +32,13 @@ functions:
       iterations: 100
       overwrite: true
       regex: /\s+(?<log_level>\w+)\s+(?<log_type>\w+)\s+(?<_json>.+)/
-    groupId: iANlpn
     description: Parse log_level+type+JSON
+  - id: chain
+    filter: "true"
+    disabled: null
+    conf:
+      processor: cribl_k8s_logs_filter
+    description: Call a pipeline containing custom filter logic
   - id: eval
     filter: _json==null
     disabled: false
@@ -52,7 +47,6 @@ functions:
         - disabled: false
           name: message
           value: _raw
-    groupId: iANlpn
     description: Set the message field to _raw for non-JSON logs
   - id: serialize
     filter: "true"
@@ -66,10 +60,8 @@ functions:
         - "!source"
         - "!sourcetype"
         - "!host"
-        - "!kube_namespace"
-        - "!kube_pod_labels*"
+        - "!kube_*"
         - log_*
-        - "!kube_container"
         - "*"
     description: Serialize the processed log into JSON format
   - id: eval
@@ -77,30 +69,22 @@ functions:
     disabled: false
     conf:
       keep:
-        - _time
-        - _raw
+        - _*
         - cribl_*
-        - kube_namespace
-        - kube_container
         - source
         - sourcetype
         - host
-        - kube_pod_labels*
         - log_*
+        - kube_*
       remove:
         - "*"
-    description: Remove unneeded fields
-  - id: eval
-    filter: "true"
-    disabled: null
-    conf:
       add:
         - disabled: false
-          name: sourcetype
           value: C.vars.k8s_logs_sourcetype || 'k8s:logs'
+          name: sourcetype
         - disabled: false
-          name: source
           value: C.vars.k8s_logs_source || 'edge-k8s-logs-' + kube_namespace + '-' +
             kube_pod
-    description: Set common fields
+          name: source
+    description: Remove unneeded fields and set common fields
 description: ""
