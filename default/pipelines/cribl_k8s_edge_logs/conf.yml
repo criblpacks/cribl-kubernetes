@@ -41,6 +41,12 @@ functions:
       latestDateAllowed: +1week
       earliestDateAllowed: -420weeks
     description: Use the time field as the timestamp
+  - id: chain
+    filter: "true"
+    disabled: null
+    conf:
+      processor: cribl_k8s_edge_logs_filter
+    description: Call a pipeline containing custom filter logic
   - id: serialize
     filter: "true"
     disabled: null

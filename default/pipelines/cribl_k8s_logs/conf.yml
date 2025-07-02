@@ -18,12 +18,13 @@ functions:
     disabled: null
     conf:
       comment: "Author: Cribl Packs Team"
-  - id: comment
-    filter: "true"
-    disabled: null
+  - id: grok
+    filter: _raw.match(/\s+\w+\s+\w+\s+{/)
+    disabled: true
     conf:
-      comment: I would consider trying to use Grok instead of Regex Extract, in my
-        experience it has shown to be more performant
+      patternList: []
+      source: _raw
+      pattern: "%{WORD:log_level}%{SPACE}%{WORD:log_type}%{SPACE}%{GREEDYDATA:_json}"
   - id: regex_extract
     filter: _raw.match(/\s+\w+\s+\w+\s+{/)
     disabled: false
@@ -35,7 +36,7 @@ functions:
     description: Parse log_level+type+JSON
   - id: chain
     filter: "true"
-    disabled: null
+    disabled: false
     conf:
       processor: cribl_k8s_logs_filter
     description: Call a pipeline containing custom filter logic

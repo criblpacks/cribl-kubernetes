@@ -54,4 +54,18 @@ functions:
             __e.CRIBLERR = err.toString()
         }
     description: 'Rename the metrics from "_" to "." separator. '
+  - id: rollup_metrics
+    filter: "true"
+    disabled: true
+    conf:
+      dimensions:
+        - replicaset
+      timeWindow: 30s
+      gaugeRollup: last
+  - id: chain
+    filter: "true"
+    disabled: true
+    conf:
+      processor: cribl_k8s_metrics_filter
+    description: Call a pipeline containing custom filter logic
 description: ""

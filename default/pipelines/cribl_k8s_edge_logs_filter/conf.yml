@@ -8,11 +8,17 @@ functions:
     disabled: null
     conf:
       comment: |-
-        Filter K8S logs as needed.
-        Available fields: 
-        * log_level, log_type, and _json for logs containing JSON
-        * message for non-JSON events
-        * _raw for all events
+        Filter K8S Edge logs as needed. Available fields: 
+        * kube_container
+        * kube_image
+        * kube_namespace
+        * kube_node
+        * kube_owner_kind
+        * kube_owner_name
+        * kube_pod
+        * kube_pod_annotations (array)
+        * kube_pod_labels (array)
+        * _raw 
   - id: comment
     filter: "true"
     disabled: null
@@ -34,25 +40,23 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      comment: By default, enable filtering of chatty, low information logs
-  - id: drop
-    filter: ' kube_pod_annotations["kubectl.kubernetes.io/last-applied-configuration"]'
-    disabled: null
-    conf: {}
-    description: Drop last-applied-configuration annotated logs
-  - id: drop
-    filter: log_level=='info' || log_level=='debug' || log_type=='Traces'
-    disabled: true
-    conf: {}
-    description: Filter out debug and informational messages
+      comment: Since these are internal Cribl Edge logs, only pass on 10% of them.
+  - id: sampling
+    filter: "true"
+    disabled: false
+    conf:
+      rules:
+        - filter: "true"
+          rate: 10
+    description: Filter out 90% of Cribl Edge K8S logs
   - id: drop
     filter: kube_namespace=='default'
     disabled: true
     conf: {}
     description: Filter by any kube_* field
   - id: drop
-    filter: "true"
+    filter: kube_pod_labels["app.kubernetes.io/name"]=='ingress-nginx'
     disabled: true
     conf: {}
-    description: Filter NGINX logs
-description: Pipeline to add custom filtering logic to K8S logs
+    description: Filter by kube_pod_label
+description: Pipeline to add custom filtering logic to K8S Edge logs
