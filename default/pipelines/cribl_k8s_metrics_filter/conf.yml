@@ -32,8 +32,26 @@ functions:
     conf:
       comment: "Author: Cribl Packs Team"
   - id: drop
-    filter: kube_replicaset
+    filter: /kube_configmap*/.test(__criblMetrics[0].nameExpr)
     disabled: false
     conf: {}
-    description: Filter by any kube_* field
+    description: Filter out repetitive config map metrics
+  - id: drop
+    filter: /kube_.*_annotations*/.test(__criblMetrics[0].nameExpr)
+    disabled: null
+    conf: {}
+    description: Filter out repetitive annotation metrics
+  - id: drop
+    filter: /kube_.*_labels*/.test(__criblMetrics[0].nameExpr)
+    disabled: null
+    conf: {}
+    description: Filter out repetitive label metrics
+  - id: rollup_metrics
+    filter: "true"
+    disabled: false
+    conf:
+      dimensions:
+        - "*"
+      timeWindow: 60s
+      gaugeRollup: last
 description: Pipeline to add custom filtering logic to K8S metrics

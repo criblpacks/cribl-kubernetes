@@ -10,6 +10,15 @@ functions:
       comment: |-
         Filter K8S logs as needed.
         Available fields: 
+        * kube_container
+        * kube_image
+        * kube_namespace
+        * kube_node
+        * kube_owner_kind
+        * kube_owner_name
+        * kube_pod
+        * kube_pod_annotations (array)
+        * kube_pod_labels (array)
         * log_level, log_type, and _json for logs containing JSON
         * message for non-JSON events
         * _raw for all events
@@ -34,25 +43,22 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      comment: By default, enable filtering of chatty, low information logs
+      comment: By default, enable filtering of high volume, low information logs.
   - id: drop
-    filter: ' kube_pod_annotations["kubectl.kubernetes.io/last-applied-configuration"]'
-    disabled: null
+    filter: kube_container=='coredns'
+    disabled: false
     conf: {}
-    description: Drop last-applied-configuration annotated logs
+    description: Drop DNS events because they are high volume/low value.
   - id: drop
-    filter: log_level=='info' || log_level=='debug' || log_type=='Traces'
-    disabled: true
+    filter: kube_container=='opentelemetry-collector'
+    disabled: false
     conf: {}
-    description: Filter out debug and informational messages
-  - id: drop
-    filter: kube_namespace=='default'
-    disabled: true
-    conf: {}
-    description: Filter by any kube_* field
-  - id: drop
+    description: Drop events from containers with high volume/low value logs.
+  - id: eval
     filter: "true"
-    disabled: true
-    conf: {}
-    description: Filter NGINX logs
+    disabled: null
+    conf:
+      remove:
+        - kube_pod_annotations*
+    description: Remove annotations - highly repetitive across events.
 description: Pipeline to add custom filtering logic to K8S logs

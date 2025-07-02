@@ -71,3 +71,9 @@ iNKbOB:
   created: 1750886766145
   size: 868331
   numEvents: 462
+o8sFLc:
+  sampleName: cribl_k8s_logs_info
+  ttl: 0
+  created: 1751478795283
+  size: 784875
+  numEvents: 567

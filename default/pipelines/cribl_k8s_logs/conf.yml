@@ -70,13 +70,14 @@ functions:
     disabled: false
     conf:
       keep:
-        - _*
         - cribl_*
         - source
         - sourcetype
         - host
         - log_*
         - kube_*
+        - _time
+        - _raw
       remove:
         - "*"
       add:

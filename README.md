@@ -8,9 +8,10 @@ This pack handles logs from Kubernetes (K8S) environments sent via Cribl Edge. I
   * All logs sent as JSON inside _raw along with important fields.
   * Logs from the Edge container are processed as JSON.
   * Logs from other containers that contain JSON have that JSON extracted and processed.
-  * Other logs encapsulated into a `message` field
-* Process K8S Events into JSON
-* Process and rename K8S Metrics
+  * Other logs encapsulated into a `message` field.
+* Process K8S Events into JSON.
+* Process and rename K8S Metrics.
+* Flexible and customizeable filtering of all log types.
 * Built-in support for Cribl HTTP Source and Cribl Lake Destination for all logs.
 
 Note that this pack *requires* that all data be sent via Cribl Edge - see deployment section for details. 
@@ -37,6 +38,13 @@ The pack comes pre-configured with three Cribl Lake Destinations:
 You must create (or modify) the datasets before data will flow.
 
 If you want to send to a Destination other than Cribl Lake, change the variable to the name of that Destination. You may need to modify the output format in, though. We recommend to *not* modify the Pack's pipelines but use a post-processing pipeline instead.
+
+#### Filters
+The Pack includes 4 filtering pipelines (one for each K8S pipeline) that can be used to drop/filter low value events. A comment at the top lists fields available for filtering.
+* `cribl_k8s_logs_filter`: This is the most important filter due to the volume and often low quality of many K8S logs. See the comment for fields available to filter on. The included examples use the `kube_container` field. `kube_namespace` is also a useful field to filter on. 
+* `cribl_k8s_edge_logs_filter`: Filter logs generated from Cribl Edge.
+* `cribl_k8s_events_filter`: Filter K8S Events. 
+* `cribl_k8s_metrics_filter`: Filter K8S Metrics. The default is to filter `config_map`, `annotations`, and `labels`. 
 
 #### Variables
 
