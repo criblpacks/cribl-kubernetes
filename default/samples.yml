@@ -1,79 +1,35 @@
-97Ba63:
-  sampleName: kube_logs.log
-  description: Kubernetes Logs
-  tags: logs
-  created: 1750266661333
-  size: 16286
-  numEvents: 10
-dpFYUN:
-  sampleName: kube_metrics.log
-  description: Kubernetes Metrics
-  tags: metrics
-  created: 1750266908648
-  size: 8091
-  numEvents: 10
-lAenzl:
-  sampleName: kube_events.log
-  description: Kubernetes Events
-  tags: events
-  created: 1750268509524
-  size: 40975
-  numEvents: 10
-BXduDy:
-  sampleName: k8s-logs-250-sample
+mxJKoG:
+  sampleName: cribl_k8s_logs
+  description: "K8S logs "
   ttl: 0
-  created: 1750448210698
-  size: 443226
-  numEvents: 250
-3GGxkL:
-  sampleName: k8s-metrics-large-sample
+  created: 1751579956861
+  size: 156034
+  numEvents: 100
+RxnYbe:
+  sampleName: cribl_k8s_metrics
+  description: K8S metrics
   ttl: 0
-  created: 1750459976339
-  size: 220501
-  numEvents: 250
-HmvRZF:
-  sampleName: 10kCapture6.24.log
-  created: 1750808325919
-  size: 703263
-  numEvents: 438
-LvHnJT:
-  sampleName: k8s-all-minikube.log
+  created: 1751580020782
+  size: 91919
+  numEvents: 100
+QJSVHB:
+  sampleName: cribl_k8s_edge_logs
+  description: K8S Edge logs
   ttl: 0
-  created: 1750810963023
-  size: 94196
-  numEvents: 50
-dfCQVL:
-  sampleName: k8s-minkube-500
+  created: 1751581110284
+  size: 156049
+  numEvents: 94
+9jmmsP:
+  sampleName: cribl_k8s_events
+  description: K8S events
   ttl: 0
-  created: 1750872715603
-  size: 824444
-  numEvents: 500
-U8agjU:
-  sampleName: k8s-minikube-events.json
-  created: 1750874480291
-  size: 15415
-  numEvents: 6
-FUR0ir:
-  sampleName: k8s-minikube-500-metrics
+  created: 1751583522588
+  size: 445931
+  numEvents: 100
+LtWLyY:
+  sampleName: cribl_k8s_events2
+  description: Additional K8S events
   ttl: 0
-  created: 1750879130971
-  size: 489009
-  numEvents: 500
-iNKbOB:
-  sampleName: k8s-metrics-1k
-  ttl: 0
-  created: 1750879239714
-  size: 5069149
-  numEvents: 5000
-7CsblM:
-  sampleName: k8s-minikube-bookinfo
-  ttl: 0
-  created: 1750886766145
-  size: 868331
-  numEvents: 462
-o8sFLc:
-  sampleName: cribl_k8s_logs_info
-  ttl: 0
-  created: 1751478795283
-  size: 784875
-  numEvents: 567
+  created: 1751583811681
+  size: 452050
+  numEvents: 100

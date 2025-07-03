@@ -5,10 +5,13 @@ comments:
     comment: Routes for processing K8S logs, events, and metrics collected via Cribl
       Edge
     index: 0
+  - id: 8NwlL0
+    comment: Disable a route to prevent processing of a given log K8S event type
+    index: 1
   - id: GmGjLm
     comment: 'Route logs from Edge nodes running in K8S. Change the
       "edge_kube_container" if you are using a different Edge container name. '
-    index: 1
+    index: 2
 routes:
   - id: Cho5sf
     name: cribl_k8s_edge_logs_route

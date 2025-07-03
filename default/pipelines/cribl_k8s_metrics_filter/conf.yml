@@ -46,6 +46,11 @@ functions:
     disabled: null
     conf: {}
     description: Filter out repetitive label metrics
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: The default rollup interval is 60s - adjust as needed
   - id: rollup_metrics
     filter: "true"
     disabled: false
@@ -54,4 +59,5 @@ functions:
         - "*"
       timeWindow: 60s
       gaugeRollup: last
+    description: Perform a rollup to reduce the volume of metrics
 description: Pipeline to add custom filtering logic to K8S metrics

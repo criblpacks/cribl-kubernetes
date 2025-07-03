@@ -41,7 +41,10 @@ If you want to send to a Destination other than Cribl Lake, change the variable 
 
 #### Filters
 The Pack includes 4 filtering pipelines (one for each K8S pipeline) that can be used to drop/filter low value events. A comment at the top lists fields available for filtering.
-* `cribl_k8s_logs_filter`: This is the most important filter due to the volume and often low quality of many K8S logs. See the comment for fields available to filter on. The included examples use the `kube_container` field. `kube_namespace` is also a useful field to filter on. 
+
+*Note: Be sure to examine each filter pipeline and ensure the enabled filters meet your needs!*
+
+* `cribl_k8s_logs_filter`: This is the most important filter due to the volume and often low quality of many K8S logs. The included examples use the `kube_container` field. `kube_namespace` is also a useful field to filter on. 
 * `cribl_k8s_edge_logs_filter`: Filter logs generated from Cribl Edge.
 * `cribl_k8s_events_filter`: Filter K8S Events. 
 * `cribl_k8s_metrics_filter`: Filter K8S Metrics. The default is to filter `config_map`, `annotations`, and `labels`. 
