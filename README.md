@@ -2,13 +2,13 @@
 
 ## About this Pack
 
-This pack handles logs from Kubernetes (K8S) environments sent via Cribl Edge. It is designed to:
+This pack processes data from Kubernetes (K8S) environments sent via Cribl Edge. It is designed to:
 
 * Provide basic processing of all logs sent via Cribl Edge.
   * All logs sent as JSON inside _raw along with important fields.
-  * Logs from the Edge container are processed as JSON.
+  * Logs from the Edge container itself are processed as JSON.
   * Logs from other containers that contain JSON have that JSON extracted and processed.
-  * Other logs encapsulated into a `message` field.
+  * Other logs are encapsulated into a `message` field.
 * Process K8S Events into JSON.
 * Process and rename K8S Metrics.
 * Flexible and customizeable filtering of all log types.
@@ -20,9 +20,13 @@ Note that this pack *requires* that all data be sent via Cribl Edge - see deploy
 
 ## Deployment
 
-This pack supports logs delivered in JSON or plaintext formats, typically collected from sources such as Fluent Bit, Vector, or file-based collectors mounted on Kubernetes nodes.
+This pack supports logs collected via Cribl Edge and sent to Cribl Lake. Note that you *must* create the Cribl Lake Datasets yourself - see below for the pre-configured Dataset Names or create your own and update the Destinations. 
 
-### 1. Configure the Pack
+### 1. Configure Cribl Edge
+
+Deploy Cribl Edge into each K8S Cluster according to the [Cribl Edge Docs](https://docs.cribl.io/edge/usecase-kubernetes-observability/#deploy-cribl-edge-via-kubernetes). 
+
+### 2. Configure the Pack
 
 #### Source
 The pack comes pre-configured with a Cribl HTTP input called `cribl-http-k8s`. Update it's configuration (Address/Port/TLS, etc) to accept Edge connections from your Fleet(s).
@@ -31,9 +35,9 @@ Note that while other Sources may work, the pack has only been tested against Cr
 
 #### Destination
 The pack comes pre-configured with three Cribl Lake Destinations:
-* `k8s_logs` - uses dataset names *k8s_logs*.
-* `k8s_events` - uses dataset names *k8s_events*.
-* `k8s_metrics` - uses dataset names *k8s_metrics*.
+* `k8s_logs` - uses dataset named *k8s_logs*.
+* `k8s_events` - uses dataset named *k8s_events*.
+* `k8s_metrics` - uses dataset named *k8s_metrics*.
 
 You must create (or modify) the datasets before data will flow.
 
@@ -63,11 +67,6 @@ This pack includes several variables that have reasonable defaults but should be
 * `k8s_events_source` - Default source for K8S events
 * `k8s_edge_logs_sourcetype` - Default sourcetype for K8S logs received from the Crible Edge container
 * `k8s_edge_logs_source` - Default sourcetype for K8S logs received from the Crible Edge container
-
-
-### 2. Configure Cribl Edge
-
-Deploy Cribl Edge into each K8S Cluster for which you want to process data according to the [Cribl Edge Docs](https://docs.cribl.io/edge/usecase-kubernetes-observability/#deploy-cribl-edge-via-kubernetes). 
 
 ---
 

@@ -41,6 +41,12 @@ functions:
       latestDateAllowed: +1week
       earliestDateAllowed: -420weeks
     description: Use the time field as the timestamp
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "[Optional - disable if unneeded] Call a pipeline containing custom
+        filter logic"
   - id: chain
     filter: "true"
     disabled: null

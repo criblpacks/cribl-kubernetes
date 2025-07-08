@@ -17,9 +17,8 @@ functions:
     filter: "true"
     disabled: null
     conf:
-      comment: "We need to use a Code block here due to Cribl maintaining metric names
-        in the __criblMetrics internal field, which means a simple Rename
-        function will not work. "
+      comment: "[Optional - disable if unneeded] Call a pipeline containing custom
+        filter logic"
   - id: chain
     filter: "true"
     disabled: false
@@ -32,6 +31,13 @@ functions:
     conf:
       comment: Renaming is disabled until we can solve the issue with the
         __criblMetrics field.
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "We need to use a Code block here due to Cribl maintaining metric names
+        in the __criblMetrics internal field, which means a simple Rename
+        function will not work. "
   - id: code
     filter: "true"
     disabled: true

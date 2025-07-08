@@ -61,6 +61,12 @@ functions:
           name: kube_namespace
           value: regarding.name
     description: Assign involvedObject and namespace fields
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "[Optional - disable if unneeded] Call a pipeline containing custom
+        filter logic"
   - id: chain
     filter: "true"
     disabled: null

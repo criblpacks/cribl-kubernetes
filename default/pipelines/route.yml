@@ -20,7 +20,7 @@ routes:
     pipeline: cribl_k8s_edge_logs
     description: Route logs from Edge nodes running in K8S
     enableOutputExpression: true
-    outputExpression: C.vars.cribl_k8s_output_logs_to_lake || 'null:null'
+    outputExpression: C.vars.cribl_k8s_output_logs_to_lake || 'devnull:devnull'
     filter: kube_container==C.vars.edge_kube_container
     clones:
       - {}
@@ -32,7 +32,7 @@ routes:
     pipeline: cribl_k8s_logs
     description: Route K8S logs gathered via Cribl Edge
     enableOutputExpression: true
-    outputExpression: C.vars.cribl_k8s_output_logs_to_lake || 'null:null'
+    outputExpression: C.vars.cribl_k8s_output_logs_to_lake || 'devnull:devnull'
     filter: kube_namespace!=null
     clones: []
     output: k8s_logs
@@ -43,7 +43,7 @@ routes:
     pipeline: cribl_k8s_events
     description: Route K8S events gathered via Cribl Edge
     enableOutputExpression: true
-    outputExpression: C.vars.cribl_k8s_output_events_to_lake || 'null:null'
+    outputExpression: C.vars.cribl_k8s_output_events_to_lake || 'devnull:devnull'
     filter: _raw.includes('events.k8s.io')
     clones: []
     output: k8s_events
@@ -54,7 +54,7 @@ routes:
     pipeline: cribl_k8s_metrics
     description: Route K8S metrics gathered via Cribl Edge
     enableOutputExpression: true
-    outputExpression: C.vars.cribl_k8s_output_metrics_to_lake || 'null:null'
+    outputExpression: C.vars.cribl_k8s_output_metrics_to_lake || 'devnull:devnull'
     filter: kube_namespace==null
     clones: []
     output: k8s_metrics
