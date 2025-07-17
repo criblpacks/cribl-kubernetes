@@ -1,0 +1,93 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Parse JSON K8S logs sent from the Cribl Edge container
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: For additional details, see this pack's README under Pack Settings.
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Author: Cribl Packs Team"
+  - id: serde
+    filter: _raw.startsWith("{")
+    disabled: null
+    conf:
+      mode: extract
+      type: json
+      srcField: _raw
+      fieldFilterExpr: value !== '' && value !== null
+    description: Parse the JSON _raw field
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: time
+      dstField: _time
+      defaultTimezone: local
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+    description: Use the time field as the timestamp
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "[Optional - disable if unneeded] Call a pipeline containing custom
+        filter logic"
+  - id: chain
+    filter: "true"
+    disabled: null
+    conf:
+      processor: cribl_k8s_edge_logs_filter
+    description: Call a pipeline containing custom filter logic
+  - id: serialize
+    filter: "true"
+    disabled: null
+    conf:
+      type: json
+      dstField: _raw
+      fields:
+        - "!_*"
+        - "!cribl*"
+        - "!source"
+        - "!sourcetype"
+        - "!kube_*"
+        - "!host"
+        - "*"
+    description: Serialize the processed log into JSON format
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      keep:
+        - _*
+        - cribl_*
+        - source
+        - sourcetype
+        - host
+        - kube_*
+      remove:
+        - "*"
+      add:
+        - disabled: false
+          value: C.vars.k8s_edge_logs_sourcetype || 'k8s:edge:logs'
+          name: sourcetype
+        - disabled: false
+          value: C.vars.k8s_edge_logs_source || 'edge-k8s-logs-' + kube_namespace + '-' +
+            kube_pod
+          name: source
+    description: Remove unneeded fields and set common fields
+description: Process JSON logs sent from Edge nodes monitoring K8S

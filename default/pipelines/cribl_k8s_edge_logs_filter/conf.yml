@@ -1,0 +1,62 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: |-
+        Filter K8S Edge logs as needed. Available fields: 
+        * kube_container
+        * kube_image
+        * kube_namespace
+        * kube_node
+        * kube_owner_kind
+        * kube_owner_name
+        * kube_pod
+        * kube_pod_annotations (array)
+        * kube_pod_labels (array)
+        * _raw 
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Filtering logic should be added to this pipeline - this avoids needing
+        to modify the default Pack pipeline
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: DO NOT USE FINAL! If you do then processing stops and the rest of the
+        K8S pipeline will not run!
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Author: Cribl Packs Team"
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Since these are internal Cribl Edge logs, only pass on 10% of them.
+  - id: sampling
+    filter: "true"
+    disabled: false
+    conf:
+      rules:
+        - filter: "true"
+          rate: 10
+    description: Filter out 90% of Cribl Edge K8S logs
+  - id: drop
+    filter: kube_namespace=='default'
+    disabled: true
+    conf: {}
+    description: Filter by any kube_* field
+  - id: drop
+    filter: kube_pod_labels["app.kubernetes.io/name"]=='ingress-nginx'
+    disabled: true
+    conf: {}
+    description: Filter by kube_pod_label
+description: Pipeline to add custom filtering logic to K8S Edge logs

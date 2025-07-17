@@ -1,0 +1,35 @@
+mxJKoG:
+  sampleName: cribl_k8s_logs
+  description: "K8S logs "
+  ttl: 0
+  created: 1751579956861
+  size: 156034
+  numEvents: 100
+RxnYbe:
+  sampleName: cribl_k8s_metrics
+  description: K8S metrics
+  ttl: 0
+  created: 1751580020782
+  size: 91919
+  numEvents: 100
+QJSVHB:
+  sampleName: cribl_k8s_edge_logs
+  description: K8S Edge logs
+  ttl: 0
+  created: 1751581110284
+  size: 156049
+  numEvents: 94
+9jmmsP:
+  sampleName: cribl_k8s_events
+  description: K8S events
+  ttl: 0
+  created: 1751583522588
+  size: 445931
+  numEvents: 100
+LtWLyY:
+  sampleName: cribl_k8s_events2
+  description: Additional K8S events
+  ttl: 0
+  created: 1751583811681
+  size: 452050
+  numEvents: 100

@@ -1,0 +1,92 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Parse JSON and non-JSON K8S logs
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: For additional details, see this pack's README under Pack Settings.
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Author: Cribl Packs Team"
+  - id: grok
+    filter: _raw.match(/\s+\w+\s+\w+\s+{/)
+    disabled: true
+    conf:
+      patternList: []
+      source: _raw
+      pattern: "%{WORD:log_level}%{SPACE}%{WORD:log_type}%{SPACE}%{GREEDYDATA:_json}"
+  - id: regex_extract
+    filter: _raw.match(/\s+\w+\s+\w+\s+{/)
+    disabled: false
+    conf:
+      source: _raw
+      iterations: 100
+      overwrite: true
+      regex: /\s+(?<log_level>\w+)\s+(?<log_type>\w+)\s+(?<_json>.+)/
+    description: Parse log_level+type+JSON
+  - id: chain
+    filter: "true"
+    disabled: false
+    conf:
+      processor: cribl_k8s_logs_filter
+    description: Call a pipeline containing custom filter logic
+  - id: eval
+    filter: _json==null
+    disabled: false
+    conf:
+      add:
+        - disabled: false
+          name: message
+          value: _raw
+    description: Set the message field to _raw for non-JSON logs
+  - id: serialize
+    filter: "true"
+    disabled: false
+    conf:
+      type: json
+      dstField: _raw
+      fields:
+        - "!_*"
+        - "!cribl*"
+        - "!source"
+        - "!sourcetype"
+        - "!host"
+        - "!kube_*"
+        - log_*
+        - "*"
+    description: Serialize the processed log into JSON format
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - cribl_*
+        - source
+        - sourcetype
+        - host
+        - log_*
+        - kube_*
+        - _time
+        - _raw
+      remove:
+        - "*"
+      add:
+        - disabled: false
+          value: C.vars.k8s_logs_sourcetype || 'k8s:logs'
+          name: sourcetype
+        - disabled: false
+          value: C.vars.k8s_logs_source || 'edge-k8s-logs-' + kube_namespace + '-' +
+            kube_pod
+          name: source
+    description: Remove unneeded fields and set common fields
+description: ""

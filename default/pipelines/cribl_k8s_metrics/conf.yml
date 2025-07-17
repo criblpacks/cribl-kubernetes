@@ -1,0 +1,75 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Process K8S metrics
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Author: Cribl Packs Team"
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "[Optional - disable if unneeded] Call a pipeline containing custom
+        filter logic"
+  - id: chain
+    filter: "true"
+    disabled: false
+    conf:
+      processor: cribl_k8s_metrics_filter
+    description: Call a pipeline containing custom filter logic
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Renaming is disabled until we can solve the issue with the
+        __criblMetrics field.
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "We need to use a Code block here due to Cribl maintaining metric names
+        in the __criblMetrics internal field, which means a simple Rename
+        function will not work. "
+  - id: code
+    filter: "true"
+    disabled: true
+    conf:
+      maxNumOfIterations: 5000
+      activeLogSampleRate: 1
+      useUniqueLogChannel: true
+      code: >-
+        try {
+            for (let [name, value] of Object.entries(__e)) {
+                // debug && __e.debug.push(name)
+                if (name.startsWith('kube_')) {
+                    let old_name = name
+                    let new_name = name.replaceAll('_','.')
+                    // debug && __e.debug.push(`map: ${old_name} -> ${new_name}`)
+                    if (new_name) {
+                        __e[new_name] = value
+                        delete __e[name]
+                    }
+                }
+
+                let values = __e.__criblMetrics[0].values
+                values = values.map(function(x){return x.replaceAll('_',".")})
+
+                let nameExpr = __e.__criblMetrics[0].nameExpr
+                nameExpr = nameExpr.map(function(x){return x.replaceAll('_',".")})
+
+                __e.__criblMetrics[0].values = values
+                __e.__criblMetrics[0].nameExpr = nameExpr
+            }  
+        } catch (err) {
+            __e.CRIBLERR = err.toString()
+        }
+    description: 'Rename the metrics from "_" to "." separator. '
+description: ""

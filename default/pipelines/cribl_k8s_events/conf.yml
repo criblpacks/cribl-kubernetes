@@ -1,0 +1,121 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Process JSON K8S Events sent from the Cribl Edge container
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: For additional details, see this pack's README under Pack Settings.
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Author: Cribl Packs Team"
+  - id: serde
+    filter: "true"
+    disabled: false
+    conf:
+      mode: extract
+      type: json
+      srcField: object
+      remove:
+        - _raw
+      fieldFilterExpr: value !== '' && value !== null
+    description: Parse the object JSON field
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: metadata.creationTimestamp
+      dstField: _time
+      defaultTimezone: UTC
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+    description: Use metadata.creationTimestamp as _time
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "Note: Edge K8S events do not have a value for involvedObject but
+        metadata.name has the same value"
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: involvedObject
+          value: metadata.name
+        - disabled: false
+          name: kube_namespace
+          value: regarding.name
+    description: Assign involvedObject and namespace fields
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "[Optional - disable if unneeded] Call a pipeline containing custom
+        filter logic"
+  - id: chain
+    filter: "true"
+    disabled: null
+    conf:
+      processor: cribl_k8s_events_filter
+    description: Call a pipeline containing custom filter logic
+  - id: serialize
+    filter: "true"
+    disabled: false
+    conf:
+      type: json
+      dstField: _raw
+      fields:
+        - "!_*"
+        - "!cribl*"
+        - "!source"
+        - "!sourcetype"
+        - "!host"
+        - "!type"
+        - "!involvedObject"
+        - "!reason"
+        - "!kube_*"
+        - "!object*"
+        - "*"
+    description: Serializes the JSON object into _raw
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      keep:
+        - _raw
+        - cribl_*
+        - _time
+        - source
+        - sourcetype
+        - host
+        - reason
+        - involvedObject
+        - type
+        - message
+        - kube_*
+      remove:
+        - "*"
+      add:
+        - disabled: false
+          value: C.vars.k8s_events_sourcetype || 'k8s:events'
+          name: sourcetype
+        - disabled: false
+          name: source
+          value: C.vars.k8s_events_source || 'edge-k8s-events'
+    description: Removed unneeded fields and add common fields
+description: ""
