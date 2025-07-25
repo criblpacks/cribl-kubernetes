@@ -30,9 +30,10 @@ outputs:
     maxConcurrentFileParts: 1
     emptyDirCleanupSec: 300
     type: cribl_lake
-    destPath: k8s_logs
+    destPath: default_logs
     description: Lake destination for K8S logs
     compress: gzip
+    __template_destPath: cribl_k8s_output_logs_to_lake
   k8s_metrics:
     systemFields:
       - cribl_pipe
@@ -64,9 +65,10 @@ outputs:
     maxConcurrentFileParts: 1
     emptyDirCleanupSec: 300
     type: cribl_lake
-    destPath: k8s_metrics
+    destPath: default_metrics
     description: Lake destination for K8S metrics
     compress: gzip
+    __template_destPath: cribl_k8s_output_metrics_to_lake
   k8s_events:
     systemFields:
       - cribl_pipe
@@ -98,6 +100,7 @@ outputs:
     maxConcurrentFileParts: 1
     emptyDirCleanupSec: 300
     type: cribl_lake
-    destPath: k8s_events
+    destPath: default_events
     description: Lake destination for K8S events
     compress: gzip
+    __template_destPath: cribl_k8s_output_events_to_lake

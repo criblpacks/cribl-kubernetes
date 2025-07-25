@@ -2,7 +2,7 @@
 
 ## About this Pack
 
-This pack processes data from Kubernetes (K8S) environments sent via Cribl Edge. It is designed to:
+This pack processes data from Kubernetes (K8S) environments sent via Cribl Edge to a Cribl Cloud Stream environment. It is designed to:
 
 * Provide basic processing of all logs sent via Cribl Edge.
   * All logs sent as JSON inside _raw along with important fields.
@@ -14,13 +14,13 @@ This pack processes data from Kubernetes (K8S) environments sent via Cribl Edge.
 * Flexible and customizeable filtering of all log types.
 * Built-in support for Cribl HTTP Source and Cribl Lake Destination for all logs.
 
-Note that this pack *requires* that all data be sent via Cribl Edge - see deployment section for details. 
+Note that this pack *requires* that all data be sent via Cribl Edge to Cribl Cloud Stream - see deployment section for details. 
 
 ---
 
 ## Deployment
 
-This pack supports logs collected via Cribl Edge and sent to Cribl Lake. Note that you *must* create the Cribl Lake Datasets yourself - see below for the pre-configured Dataset Names or create your own and update the Destinations. 
+This pack supports logs collected via Cribl Edge and sent to Cribl Lake requiring a Cribl Cloud deployment. It is recommended that you create new lake datasets specific to Kubernetes events, metrics and logs before continuing however you are able to use the default datasets pre-configured with the pack.
 
 ### 1. Configure Cribl Edge
 
@@ -108,7 +108,3 @@ Thanks to the Cribl community and platform users for field input on Kubernetes o
 ## License
 
 This Pack uses the following license: [Apache 2.0](https://github.com/criblio/appscope/blob/master/LICENSE).
-
----
-
-
