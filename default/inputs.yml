@@ -19,5 +19,7 @@ inputs:
     ipAllowlistRegex: /.*/
     ipDenylistRegex: /^$/
     type: cribl_http
-    port: 10200
+    port: 11200
     description: Cribl HTTP source for ingesting K8S data from Cribl Edge
+    __template_port: k8s_http_port
+    __template_host: k8s_http_host
